@@ -1,0 +1,8 @@
+# Testing the in-process order fulfillment engine used by an e-commerce platform.
+
+This testing strategy uses a "Layered" approach to make sure the Order system is reliable,
+Catching errors before they cause real-world problems. At the heart of the tests is the Order object. I use **parameterized tests** to check many different scenarios at once, such as conforming that a "Draft" order can be paid for, while a "Cancelled" order cannot be shipped. if an action breaks the buiness rules, the code must raise an **InvalidStateTransition** error.
+To keep the tests clean and easy to read, I use "Order_factory" instead of writing lines of code to set up an Order, this factory builds one in the exact state I need (like "Paid" or "Shipped") in a single line.
+For external services like payment or shipping, I use "mocks". These act like face stand-ins that let us verify our code sends the correct instructions without nedding to connect to actual banks or shipping comapnies.
+
+I also test the event system independently to ensure that every time an order changes, the right notifications are sent out in the correct order. Finally, I run integration tests that walk trough the entire lifecyle-from the first draft to the final shipment, to make sure al the parts work together smoothly. While this approach gives me a strong foundation, I now that real production systems would need more work to handle complex issues like multiple users trying to update the samle order at the exact same time.
